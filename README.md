@@ -1,0 +1,2 @@
+# ScalaSamples
+Scala codes
