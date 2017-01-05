@@ -1,0 +1,138 @@
+
+Topics :
+
+1)List
+2)Zipping
+3)Unzipping
+4)converting array to tuple
+5) Using contains
+6)Using Get Or Else
+7)creating a MAP item
+8)Doing Group By
+
+
+Val splitlist = List(the/DT, program/NN, halted/VB)
+
+scala> splitlist.map(x=> x.split("/")).map(x=>Tuple2(x(0),x(1))) //to convert array to a tuple
+res23: List[(String, String)] = List((the,DT), (program,NN), (halted,VB))
+
+scala> splitlist.map(x=> x.split("/"))
+res24: List[Array[String]] = List(Array(the, DT), Array(program, NN), Array(halted, VB))
+
+scala> splitlist.map(x=> x.split("/")).map(x=>Tuple2(x(0),x(1)))
+res25: List[(String, String)] = List((the,DT), (program,NN), (halted,VB))
+
+scala> splitlist.map(x=> x.split("/")).map(x=>Tuple2(x(0),x(1))).unzip //to convert tuples to individual lists
+res26: (List[String], List[String]) = (List(the, program, halted),List(DT, NN, VB))
+                 ^
+
+scala> val sp3 = splitlist.map(x=> x.split("/")).map(x=>Tuple2(x(0),x(1))).unzip
+sp3: (List[String], List[String]) = (List(the, program, halted),List(DT, NN, VB))
+
+scala> val (sp1,sp2) = sp3
+sp1: List[String] = List(the, program, halted)
+sp2: List[String] = List(DT, NN, VB)
+
+
+scala> val sp2new = sp2.map(x=>trans(x))//calling a function inside a map iterator
+sp2new: List[String] = List(article, Noun, verb)
+                                                                       ^
+
+scala> (for ((x,y) <- sp1.zip(sp2new)) yield x + "/" + y).mkString(" ")
+res27: String = the/article program/Noun halted/verb                                                              ^
+
+scala> val wordstotrans = List("the", "program", "halted", "again", "halted")
+wordstotrans: List[String] = List(the, program, halted, again, halted)
+
+scala> wordstotrans.filter(x=>sp2new.contains(x)) checking for a string in list of strings
+res29: List[String] = List()
+
+scala> wordstotrans.filter(x=>sp2new.contains(x))
+res30: List[String] = List()
+
+
+scala> val example = "vom eise befreit sind strom und baeche"
+example: String = vom eise befreit sind strom und baeche
+
+scala> example
+res38: String = vom eise befreit sind strom und baeche
+scala> val exlist = example.split(" ").toList
+exlist: List[String] = List(vom, eise, befreit, sind, strom, und, baeche)
+
+^
+
+scala> val mindict = Map(("befreit","liberated"),("baeche","brooks"),("eise","ice"),("sind","are"),("storm","river"),("und","and"),("vom","from"))
+mindict: scala.collection.immutable.Map[String,String] = Map(und -> and, eise -> ice, storm -> river, sind -> are, befreit -> liberated, vom -> from, baeche -> brooks)
+
+        
+                                    ^
+
+scala> exlist.map(x=>mindict.getOrElse(x,"N/A")) // to give a value if a value is not found
+res43: List[String] = List(from, ice, liberated, are, N/A, and, brooks)
+
+scala> exlist.map(x=>mindict.getOrElse(x,"N/A")).mkString(" ")
+res44: String = from ice liberated are N/A and brooks
+
+scala> val resList =exlist.map(x=>mindict.getOrElse(x,"N/A"))
+resList: List[String] = List(from, ice, liberated, are, N/A, and, brooks)
+
+scala> exlist
+res45: List[String] = List(vom, eise, befreit, sind, strom, und, baeche)
+
+scala> resList
+res46: List[String] = List(from, ice, liberated, are, N/A, and, brooks)
+
+scala> exlist.zip(resList)
+res47: List[(String, String)] = List((vom,from), (eise,ice), (befreit,liberated), (sind,are), (strom,N/A), (und,and), (baeche,brooks))
+
+scala> exlist.zip(resList).toMap
+res48: scala.collection.immutable.Map[String,String] = Map(und -> and, eise -> ice, sind -> are, befreit -> liberated, strom -> N/A, vom -> from, baeche -> brooks)
+
+scala> resList.zip(exlist).toMap
+res49: scala.collection.immutable.Map[String,String] = Map(are -> sind, brooks -> baeche, N/A -> strom, ice -> eise, from -> vom, liberated -> befreit, and -> und)
+
+scala> val numbers = List(1,1,2,3,4,1,4,3,2,2,2,4,)
+<console>:1: error: illegal start of simple expression
+       val numbers = List(1,1,2,3,4,1,4,3,2,2,2,4,)
+                                                  ^
+
+scala> val numbers = List(1,1,2,3,4,1,4,3,2,2,2,4,7)
+numbers: List[Int] = List(1, 1, 2, 3, 4, 1, 4, 3, 2, 2, 2, 4, 7)
+
+scala> numbers.groupBy(x=>x)
+res50: scala.collection.immutable.Map[Int,List[Int]] = Map(1 -> List(1, 1, 1), 2 -> List(2, 2, 2, 2), 7 -> List(7), 3 -> List(3, 3), 4 -> List(4, 4, 4))
+
+scala> val result = numbers.groupBy(x=>x)
+result: scala.collection.immutable.Map[Int,List[Int]] = Map(1 -> List(1, 1, 1), 2 -> List(2, 2, 2, 2), 7 -> List(7), 3 -> List(3, 3), 4 -> List(4, 4, 4))
+
+scala> result(1)
+res51: List[Int] = List(1, 1, 1)
+
+scala> result(2)
+res52: List[Int] = List(2, 2, 2, 2)
+
+scala> result(2).length
+res53: Int = 4
+
+scala> val newex = "the/article saw/noun saw/verb program/noun program/verb halted/verb"
+newex: String = the/article saw/noun saw/verb program/noun program/verb halted/verb
+
+scala> newex.split(" ").toList
+res54: List[String] = List(the/article, saw/noun, saw/verb, program/noun, program/verb, halted/verb)
+
+scala> newex.split(" ").toList.map(x=>x.split("/")
+     | )
+res55: List[Array[String]] = List(Array(the, article), Array(saw, noun), Array(saw, verb), Array(program, noun), Array(program, verb), Array(halted, verb))
+
+scala> newex.split(" ").toList.map(x=>x.split("/")).map(x=>Tuple2(x(0),x(1)))
+res56: List[(String, String)] = List((the,article), (saw,noun), (saw,verb), (program,noun), (program,verb), (halted,verb))
+
+scala> val newexlist = newex.split(" ").toList.map(x=>x.split("/")).map(x=>Tuple2(x(0),x(1)))
+newexlist: List[(String, String)] = List((the,article), (saw,noun), (saw,verb), (program,noun), (program,verb), (halted,verb))
+
+scala> newexlist.toMap
+res57: scala.collection.immutable.Map[String,String] = Map(the -> article, saw -> verb, program -> verb, halted -> verb)
+
+scala> newexlist.toMap.keys //to just get keys from a map
+res58: Iterable[String] = Set(the, saw, program, halted)
+
