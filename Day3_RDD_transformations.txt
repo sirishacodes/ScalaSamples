@@ -1,0 +1,312 @@
+A Resilient Distributed Dataset (RDD), the basic abstraction in Spark. Represents an immutable, partitioned collection of elements that can be operated on in parallel. This class contains the basic operations available on all RDDs, such as map, filter, and persist. In addition,PairRDDFunctions contains operations available only on RDDs of key-value pairs, such as groupByKey and join; 
+Internally, each RDD is characterized by five main properties:
+- A list of partitions - A function for computing each split - A list of dependencies on other RDDs - Optionally, a Partitioner for key-value RDDs (e.g. to say that the RDD is hash-partitioned) - Optionally, a list of preferred locations to compute each split on (e.g. block locations for an HDFS file)
+
+When we create RDD which will store it in RAM.. Spark creates lineage of all data..
+Below are commands executed for transformations on RDD
+
+If we loose partition,it can be easily recalculated..
+RDD partitions happens in memory
+RDD partitions happens in memory
+RDD wont store permanently it will execute only an action called collect is performed as RDD are lazy
+
+val xs = (1 to 100).toList
+val rdd = sc.parallelize(xs) //for converting list to RDD
+rdd.partitions.length// to get number of partitions
+jps
+rdd.collect
+ val rdd2 = sc.TextFile("/users/hdppp/testscala")// to load text File into RDD
+ val rdd2 = sc.textFile("/users/hdppp/testscala")
+rdd2.partitions.length//. No of partitions created for RDD
+ val rdd2 = sc.textFile("/user/sbairi/a.txt")
+rdd2.partitions.length
+rdd2.DebugString// To get Lineage graph for a RDD
+rdd2.toDebugString
+a.collect
+rdd2.collect
+rdd3 = sc.textFile("/users/hdpppp/testscala")
+val rdd3 = sc.textFile("/users/hdpppp/testscala")
+rdd3.collect
+val rdd4 = sc.textFile("/user/hive/warehouse/src/kv1.txt
+val rdd4 = sc.textFile("/user/hive/warehouse/src/kv1.txt")
+rdd4.collect
+val xs = (1 to 1000).toList
+val rdd1 = xs.Parallelize
+val rdd1 = xs.Parallelize()
+val rdd1 = sc.parallelize(xs)
+rdd1.collect
+val rdd2 = sc.textFile("dsv.sql");
+rdd2.collect
+val rdd2 = sc.textFile("file:///dsv.sql");//to get local file into RDD
+rdd2.collect
+val rdd2 = sc.textFile("file:///users/hdpppp/dsv.sql");
+rdd2.collect
+rdd2.map(x=>x.length)
+val lengths = rdd2.map(x=>x.length)
+lengths.toDebugString
+lengths.collect
+val longLines = rdd2.filter(x=>x.length > 80)// filtering and RDD
+longLines.toDebugString
+longLines.collect() //till collect is performed the lineage graph will not executed which leads to scala’s lazy execution
+longLines.collect()
+longLines.collect().map(x=>x.length)//getting length of each field
+val xs = List["Ramesh","Rani","Raghu"]
+val xs = List("Ramesh","Rani","Raghu")
+val sample = sc.parallelize(xs)
+sample.toDebugString
+val maRdd = sample.map(x=>x.length)
+mapRdd.collect
+maRdd.collect
+val mapres = rdd2.map(x=>x.split(" "))
+mapres.toDebugString
+mapres.collect
+val flatMapres = rdd2.flatMap(x=>x.split(" "))// for splitting to a record to strings and flatten them both in same function unlike in hive
+flatMapres.collect
+val wordsMap = flatMapres.map(x=>(x,1))
+wordsMap.toDebugString
+WordsMap.collect
+wordsMap.collect
+val pairRDD = sc.parallelize(List(("a",1),("b",1),("c",1)("a",1),("b",1),("a",1)))
+val exlist = List(("a",1),("b",1),("c",1),("a",1),("b",1),("a",1)))
+val exlist = List(("a",1),("b",1),("c",1),("a",1),("b",1),("a",1))
+val pairRDD = sc.parallelize(exlist);
+val data =List(1,2,3,4)
+data.reduce((x,y) => (x+y))
+val sumByKeyRDD = pairRDD.reduceByKey((x,y) => (x+y))// to do reduce by key
+sumByKeyRDD.collect
+val wordcountRDD = wordsMap.reduceBYKey((x,y)=>(x+y))
+val wordcountRDD = wordsMap.reduceByKey((x,y)=>(x+y))
+wordcountRDD.collect()
+wordcountRDD.toDebugSTring// to get the lineage graph of an RDD
+wordcountRDD.toDebugString
+
+Getting error while trying to create hive context in spark-shell
+
+val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+
+Need Appropriate permissions to execute above command
+
+        at scala.collection.Iterator$class.foreach(Iterator.scala:727)
+        at scala.collection.AbstractIterator.foreach(Iterator.scala:1157)
+        at scala.collection.IterableLike$class.foreach(IterableLike.scala:72)
+        at scala.collection.AbstractIterable.foreach(Iterable.scala:54)
+        at org.apache.spark.sql.SQLContext.<init>(SQLContext.scala:286)
+        at org.apache.spark.sql.hive.HiveContext.<init>(HiveContext.scala:90)
+        at org.apache.spark.sql.hive.HiveContext.<init>(HiveContext.scala:101)
+        at $iwC$$iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:21)
+        at $iwC$$iwC$$iwC$$iwC$$iwC.<init>(<console>:26)
+        at $iwC$$iwC$$iwC$$iwC.<init>(<console>:28)
+        at $iwC$$iwC$$iwC.<init>(<console>:30)
+        at $iwC$$iwC.<init>(<console>:32)
+        at $iwC.<init>(<console>:34)
+        at <init>(<console>:36)
+        at .<init>(<console>:40)
+        at .<clinit>(<console>)
+        at .<init>(<console>:7)
+        at .<clinit>(<console>)
+        at $print(<console>)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.apache.spark.repl.SparkIMain$ReadEvalPrint.call(SparkIMain.scala:1065)
+        at org.apache.spark.repl.SparkIMain$Request.loadAndRun(SparkIMain.scala:1346)
+        at org.apache.spark.repl.SparkIMain.loadAndRunReq$1(SparkIMain.scala:840)
+        at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:871)
+        at org.apache.spark.repl.SparkIMain.interpret(SparkIMain.scala:819)
+        at org.apache.spark.repl.SparkILoop.reallyInterpret$1(SparkILoop.scala:857)
+        at org.apache.spark.repl.SparkILoop.interpretStartingWith(SparkILoop.scala:902)
+        at org.apache.spark.repl.SparkILoop.command(SparkILoop.scala:814)
+        at org.apache.spark.repl.SparkILoop.processLine$1(SparkILoop.scala:657)
+        at org.apache.spark.repl.SparkILoop.innerLoop$1(SparkILoop.scala:665)
+        at org.apache.spark.repl.SparkILoop.org$apache$spark$repl$SparkILoop$$loop(SparkILoop.scala:670)
+        at org.apache.spark.repl.SparkILoop$$anonfun$org$apache$spark$repl$SparkILoop$$process$1.apply$mcZ$sp(SparkILoop.scala:997)
+        at org.apache.spark.repl.SparkILoop$$anonfun$org$apache$spark$repl$SparkILoop$$process$1.apply(SparkILoop.scala:945)
+        at org.apache.spark.repl.SparkILoop$$anonfun$org$apache$spark$repl$SparkILoop$$process$1.apply(SparkILoop.scala:945)
+        at scala.tools.nsc.util.ScalaClassLoader$.savingContextLoader(ScalaClassLoader.scala:135)
+        at org.apache.spark.repl.SparkILoop.org$apache$spark$repl$SparkILoop$$process(SparkILoop.scala:945)
+        at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:1059)
+        at org.apache.spark.repl.Main$.main(Main.scala:31)
+        at org.apache.spark.repl.Main.main(Main.scala)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.apache.spark.deploy.SparkSubmit$.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:742)
+        at org.apache.spark.deploy.SparkSubmit$.doRunMain$1(SparkSubmit.scala:181)
+        at org.apache.spark.deploy.SparkSubmit$.submit(SparkSubmit.scala:206)
+        at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:121)
+        at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+Caused by: org.apache.hadoop.security.AccessControlException: User hdpppp(user id 50006054)  has been denied access to create hive
+        at com.mapr.fs.MapRFileSystem.makeDir(MapRFileSystem.java:1250)
+        at com.mapr.fs.MapRFileSystem.mkdirs(MapRFileSystem.java:1270)
+        at org.apache.hadoop.hive.ql.exec.Utilities.createDirsWithPermission(Utilities.java:3681)
+        at org.apache.hadoop.hive.ql.session.SessionState.createRootHDFSDir(SessionState.java:600)
+        at org.apache.hadoop.hive.ql.session.SessionState.createSessionDirs(SessionState.java:554)
+        at org.apache.hadoop.hive.ql.session.SessionState.start(SessionState.java:508)
+        ... 58 more
+
+
+scala> hiveContext.collect(0
+     | )
+<console>:20: error: not found: value hiveContext
+              hiveContext.collect(0
+              ^
+
+scala> hiveContext.collect()
+<console>:20: error: not found: value hiveContext
+              hiveContext.collect()
+              ^
+
+scala> hiveContext.sql("show tables")
+<console>:20: error: not found: value hiveContext
+              hiveContext.sql("show tables")
+              ^
+                    
+val lines = rdd1.union(rdd2) //for union of two RDDS
+lines.collect
+rdd2.collect
+val intrd = sc.parallelize(List(1,2,3,4)) //creating RDD from List
+intrd.collect
+val intrd2 = sc.parallelize(List(5,6,7,8))
+val intrd3 = intrd.union(intrd2)
+intrd3.collect
+val comlins = rdd1.union(rdd2)
+comlins.collect
+val comlins2 = rdd2.union(rdd1)
+comlins2.collect
+val numbers = sc.parallelize(List(1,2,3,4))
+val alphabets = sc.parallelize(List(1,2,3,4))
+val zippedpairs = numbers.zip(alphabets)
+zippedpairs.collect
+case Class Customer(name:String,age:Int,Gender:String,Zip:String)//creating case classes In Spark
+Case Class Customer(name:String,age:Int,Gender:String,Zip:String)
+case class Customer(name:String,age:Int,Gender:String,Zip:String)
+val lines = sc.textFile("file:///users/hdpppp/customer.text")
+lines.collect
+val lines = sc.textFile("file:///users/hdpppp/customer.txt")
+val customers = lines.map(x=>{val a =x.split(",")})
+customers.collect
+ val customers2 = lines.map{x=>{val b =x.split(",") customer(a(0),a(1).toInt,a(2),a(3))}}
+ val customers2 = lines.map{x=>{val b =x.split(",") Customer(a(0),a(1).toInt,a(2),a(3))}} //Mapping case class to the dataset
+val customers2 = lines.map{x=>{
+val a = x.split(",")
+Customer(a(0),a(1).toInt,a(2),a(3))
+}
+customers2.collect
+val groupByZip = customers2.groupBy(x=>x.zip)
+val groupByZip = customers2.groupBy(x=>x.Zip)
+groupByZip.collect
+val results =hc.sql("select * from pre_rebates_index
+val results =hc.sql("select * from pre_rebates_index")
+val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)//giving error as no appropriate permissions
+hiveContext.sql("CREATE TABLE IF NOT EXISTS TestTable (key INT, value STRING)")
+val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+val c SparkConf().setAppName("Save result to hive remotely").setMaster("local[12]")
+val sc = new SparkContext(conf)
+val c SparkConf().setAppName("Save result to hive remotely").setMaster("local[12]")
+val c = SparkConf().setAppName("Save result to hive remotely").setMaster("local[12]")
+HiveContext hiveContext = new org.apache.spark.sql.hive.HiveContext
+val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
+val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+HiveContext.collect
+hiveContext.collect
+val hiveContext = new org.apache.spark.sql.hive.HiveContext(sc)
+hiveContext.collect(0
+)
+hiveContext.collect()
+
+scala> val numbers = sc.parallelize((1 to 1000).toList) //range to list
+numbers: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[0] at parallelize at <console>:21
+scala> numbers.collect
+[Stage 0:>                                                          (0 + 0) / 8                                                                               res0: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, ...
+                                              ^
+
+scala> val numberwithonepartition = numbers.repartition(4) //for repartitioning
+numberwithonepartition: org.apache.spark.rdd.RDD[Int] = MapPartitionsRDD[4] at repartition at <console>:23
+
+                                     ^
+                                     ^
+
+scala> numberwithonepartition.partitions.length
+res3: Int = 4
+
+                                   ^
+
+scala> val KVRDD = sc.parallelize(List(("a",1),("b",2),("c",3)) //mentioning key value pairs
+     | )
+KVRDD: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[5] at parallelize at <console>:21
+
+scala> KVRDD.keys
+res4: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[6] at keys at <console>:24
+
+scala> KVRDD.keys.collect.foreach(println) //getting only keys from key value pair
+a
+b
+c
+
+scala> val valuesDouble = KVRDD.mapValues(x=>x*2) // to apply transformation on only values 
+valuesDouble: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[8] at mapValues at <console>:23
+
+scala> valuesDouble.collect
+res6: Array[(String, Int)] = Array((a,2), (b,4), (c,6))
+
+scala> val pairRDD1 = sc.parallelize(List(("a",1),("b",2),("c",3))
+     | )
+pairRDD1: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[9] at parallelize at <console>:21
+
+                                      ^
+
+scala> val pairRDD2 = sc.parallelize(List(("b","second"),("c","Third"),("d","fourth")))
+pairRDD2: org.apache.spark.rdd.RDD[(String, String)] = ParallelCollectionRDD[10] at parallelize at <console>:21
+
+scala> val joinRDD = pairRDD1.join(pairRDD2) //joining two RDDS
+joinRDD: org.apache.spark.rdd.RDD[(String, (Int, String))] = MapPartitionsRDD[13] at join at <console>:25
+
+scala> joinRDD.collect
+res7: Array[(String, (Int, String))] = Array((b,(2,second)), (c,(3,Third)))
+                       ^
+
+scala> pairRDD1.leftOuterJoin(pairRDD2).collect.foreach(println) ////left outer joining of two RDDS
+
+(a,(1,None))
+(b,(2,Some(second)))
+(c,(3,Some(Third)))
+
+scala> pairRDD1.rightOuterJoin(pairRDD2).collect.foreach(println)  //right outer joining of two RDDS will get none instead of null unlike in oracle
+(b,(Some(2),second))
+(c,(Some(3),Third))
+(d,(None,fourth))
+
+                       ^
+
+scala> pairRDD1.fullOuterJoin(pairRDD2).collect.foreach(println) //full outer join
+(a,(Some(1),None))
+(b,(Some(2),Some(second)))
+(c,(Some(3),Some(Third)))
+(d,(None,Some(fourth)))
+
+scala> pairRDD1.subtractByKey(pairRDD2).collect.foreach(println) //to get only unmatched keys
+(a,1)
+
+
+scala> val pairRDD = sc.parallelize(List(("a",1),("b",2),("c",3),("a",2),("b",6)))
+pairRDD: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[24] at parallelize at <console>:21
+
+scala> val groupedRDD = pairRDD.groupByKey()
+groupedRDD: org.apache.spark.rdd.RDD[(String, Iterable[Int])] = ShuffledRDD[25] at groupByKey at <console>:23
+
+scala> groupedRDD.collect
+res16: Array[(String, Iterable[Int])] = Array((a,CompactBuffer(1, 2)), (b,CompactBuffer(2, 6)), (c,CompactBuffer(3)))
+
+                                   ^
+                                                ^
+
+scala> val sumBykeyRDD = pairRDD.reduceByKey((x,y)=>(x+y))
+sumBykeyRDD: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[26] at reduceByKey at <console>:23
+
+                          ^
+
+scala> sumBykeyRDD.collect
+res18: Array[(String, Int)] = Array((a,3), (b,8), (c,3))
